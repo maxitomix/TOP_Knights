@@ -1,0 +1,11 @@
+{
+  "name": "top_knights",
+  "version": "1.0.0",
+  "description": "https://www.theodinproject.com/lessons/javascript-knights-travails;",
+  "main": "notes.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
