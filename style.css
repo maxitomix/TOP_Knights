@@ -1,0 +1,32 @@
+*{
+    box-sizing: border-box;
+}
+
+.light{
+    background-color: whitesmoke;
+}
+
+.dark{
+    background-color: gray;
+}
+
+body{
+    height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.content{
+    width: 600px;
+    height: 600px;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+}
+
+.cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }

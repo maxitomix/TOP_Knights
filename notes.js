@@ -55,15 +55,33 @@ const breathFirstPrint = (graph, source) => { //only itirative for BFS
     }
 };
 
-function printGraph(graph){
-let content = document.getElementsByClassName('content')[0];
-Object.entries(graph).forEach(entry => {
-    const [key, value] = entry;
-    let displayEntry = document.createElement('div');
-    displayEntry.textContent = `${key}:  ${value} `
-    content.appendChild(displayEntry); 
-  });
-}
+// function printGraph(graph){
+// let content = document.getElementsByClassName('content')[0];
+// Object.entries(graph).forEach(entry => {
+//     const [key, value] = entry;
+//     let displayEntry = document.createElement('div');
+//     displayEntry.textContent =`${key}: ${value} `
+//     content.appendChild(displayEntry); 
+//   });
+// }
+
+function printGraph(graph) {
+    let content = document.getElementsByClassName('content')[0];
+    
+    for (let row = 0; row < graph.length; row++) {
+      for (let col = 0; col < graph[row].length; col++) {
+        let displayEntry = document.createElement('div');
+        displayEntry.textContent = graph[row][col];
+        displayEntry.classList.add('cell');
+        if ((row + col) % 2 === 0) {
+          displayEntry.classList.add('light'); // Add class for light-colored cells
+        } else {
+          displayEntry.classList.add('dark'); // Add class for dark-colored cells
+        }
+        content.appendChild(displayEntry);
+      }
+    }
+  }
 
 
 
@@ -108,26 +126,100 @@ function checkEntries(src, dest) {
     return true;
 }
 
-function explore(src,dest, visited){
+function explore(src, dest, visited) {
     if (!checkOutOfBounds(src)) return false;
-
+  
+    const queue = []; // Initialize a queue to hold positions
+    const visitedSet = new Set(); // Use a set to keep track of visited positions
+  
     let [r, c] = src.split(',');
-    const pos = r +','+ c;
-
-    if (visited.includes(pos)) return false;
-
-    visited.push(pos);
-    if (pos === dest) {
-        console.log('found path');  
+    const startPos = r + ',' + c;
+  
+    queue.push(startPos); // Enqueue the starting position
+  
+    while (queue.length > 0) {
+      const currentPos = queue.shift(); // Dequeue the current position
+  
+      if (visitedSet.has(currentPos)) continue;
+  
+      visited.push(currentPos);
+      visitedSet.add(currentPos);
+  
+      if (currentPos === dest) {
+        console.log('Found path');
+        console.log(visited);
         return true;
+      }
+  
+      // Explore all possible moves from the current position
+      let [curR, curC] = currentPos.split(',');
+      curR = parseInt(curR);
+      curC = parseInt(curC);
+  
+      const moves = [
+        [curR - 2, curC + 1],
+        [curR - 1, curC + 2],
+        [curR + 1, curC + 2],
+        [curR + 2, curC + 1],
+        [curR - 1, curC - 2],
+        [curR - 2, curC - 1],
+        [curR + 1, curC - 2],
+        [curR + 2, curC - 1]
+      ];
+  
+      for (const [newR, newC] of moves) {
+        const newPos = newR + ',' + newC;
+        if (checkOutOfBounds(newPos) && !visitedSet.has(newPos)) {
+          queue.push(newPos); // Enqueue the new position
+        }
+      }
     }
+  
+    console.log('No path exists');
+    return false;
+  }
 
-    // console.log(typeof(r))
-    let move1 = (parseInt(r)+1)+','+(parseInt(c)+1);
-    // console.log(move1);
 
-    explore(move1,dest,visited)
-}
+
+
+
+
+// function explore(src,dest, visited){    /// depth first.
+//     if (!checkOutOfBounds(src)) return false;
+
+//     let [r, c] = src.split(',');
+//     const pos = r +','+ c;
+
+//     if (visited.includes(pos)) return false;
+
+//     visited.push(pos);
+//     if (pos === dest) {
+//         console.log('found path');  
+//         console.log(visited);
+//         return true;
+//     }
+
+//     // console.log(typeof(r))
+//     let move1 = (parseInt(r)-2)+','+(parseInt(c)+1);
+//     let move2 = (parseInt(r)-1)+','+(parseInt(c)+2);
+//     let move3 = (parseInt(r)+1)+','+(parseInt(c)+2);
+//     let move4 = (parseInt(r)+2)+','+(parseInt(c)+1);
+//     let move5 = (parseInt(r)-1)+','+(parseInt(c)-2);
+//     let move6 = (parseInt(r)-2)+','+(parseInt(c)-1);
+//     let move7 = (parseInt(r)+1)+','+(parseInt(c)-2);
+//     let move8 = (parseInt(r)+2)+','+(parseInt(c)-1);
+    
+//     // console.log(move1);
+
+//     explore(move1,dest,visited);
+//     explore(move2,dest,visited);
+//     explore(move3,dest,visited);
+//     explore(move4,dest,visited);
+//     explore(move5,dest,visited);
+//     explore(move6,dest,visited);
+//     explore(move7,dest,visited);
+//     explore(move8,dest,visited);
+// }
 
 
 
@@ -138,19 +230,10 @@ function work(graph, src, dest){
     printGraph(graph);
     checkEntries(src,dest);
     explore(src,dest, visited);
-    console.log(visited)
+   
 }
 
 let graph = [];
 buildGraph(8,8);
 
-work(graph, '0,0' , '2,2');
-
-
-// console.log(graph[0][1])
-
-// depthFirstPrintIterative(graph, 'a');
-// console.log('//');
-// depthFirstPrintRecursive(graph, 'a');
-// console.log('//');
-// breathFirstPrint(graph,'a');
+work(graph, '6,4' , '4,5');
