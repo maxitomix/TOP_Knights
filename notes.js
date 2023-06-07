@@ -155,6 +155,7 @@ function checkEntries(src, dest) {
 }
 
 function explore(src, dest) {
+    if (!checkEntries) return false;
     if (!checkOutOfBounds(src)) return false;
   
     const queue = []; // Initialize a queue to hold positions
@@ -183,11 +184,12 @@ function explore(src, dest) {
             path.unshift(current); // Add the cell to the beginning of the path
             current = parentMap.get(current); // Move to the parent cell
         }
-        console.log('Path:', path.join(' -> '));
+        // console.log('Path:', path.join(' -> '));
+        let resultingPath = 'Path:' + path.join(' -> ');
+        console.log(resultingPath)
 
-
-        return true;
-      }
+        return resultingPath
+      };
   
       // Explore all possible moves from the current position
       let [curR, curC] = currentPos.split(',');
@@ -210,30 +212,46 @@ function explore(src, dest) {
         if (checkOutOfBounds(newPos) && !visitedSet.has(newPos)) {
           queue.push(newPos); // Enqueue the new position
           parentMap.set(newPos, currentPos); // Set the current cell as the parent of the new cell
-          console.log(parentMap);
+          // console.log(parentMap);
         }
       }
     }
   
     console.log('No path exists');
     return false;
-  }
+}
+
+function controls(){
+    const body = document.getElementsByClassName('controls')[0];
+    const button = document.createElement('button');
+    button.textContent = 'Find Path';
+    body.appendChild(button);
+    const result = document.createElement('p');
+    result.textContent = 'left mouse btn start // right mouse button destination';
+    button.addEventListener('click', () =>{
+      result.textContent = explore(src, dest)
+    })
+    body.appendChild(result)
+}
 
 
 //------------------------
-function work(graph, src, dest){
-    checkEntries(src,dest);
-    explore(src,dest);
-   
-}
+
+    
+let src = '3,3'
+let dest = '0,7'
+
+
 
 let graph = [];
 buildGraph(8,8);
 printGraph(graph);
-work(graph, '3,3' , '0,7');
+controls();
+explore(src, dest);
 
 
 
 
-let src;
-let dest;
+
+
+

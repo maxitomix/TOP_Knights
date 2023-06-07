@@ -13,6 +13,7 @@
 body{
     height: 100dvh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 }
@@ -23,6 +24,7 @@ body{
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(8, 1fr);
+    margin-bottom: 3rem;
 }
 
 .cell {
@@ -37,4 +39,17 @@ body{
 
 .dest{
     border: 4px solid green;
+}
+
+.controls{
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+p{
+    padding: 1rem;
+    padding-top: .25rem;
 }
