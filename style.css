@@ -29,4 +29,12 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
-  }
+}
+
+.src{
+    border: 4px solid black;
+}
+
+.dest{
+    border: 4px solid green;
+}

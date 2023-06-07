@@ -70,18 +70,49 @@ function printGraph(graph) {
     
     for (let row = 0; row < graph.length; row++) {
       for (let col = 0; col < graph[row].length; col++) {
-        let displayEntry = document.createElement('div');
-        displayEntry.textContent = graph[row][col];
-        displayEntry.classList.add('cell');
+        let cell = document.createElement('div');
+        cell.textContent = graph[row][col];
+        cell.dataset.coord =`${graph[row][col]}`
+        cell.addEventListener('click', () =>{
+
+        })
+        addClickFunctionality(cell)
+        cell.classList.add('cell');
         if ((row + col) % 2 === 0) {
-          displayEntry.classList.add('light'); // Add class for light-colored cells
+          cell.classList.add('light'); // Add class for light-colored cells
         } else {
-          displayEntry.classList.add('dark'); // Add class for dark-colored cells
+          cell.classList.add('dark'); // Add class for dark-colored cells
         }
-        content.appendChild(displayEntry);
+        content.appendChild(cell);
       }
     }
-  }
+}
+
+function addClickFunctionality(cell){
+        const cells = document.getElementsByClassName('cell');
+
+        cell.addEventListener('click', () =>{
+          src = cell.dataset.coord;
+          console.log('src:',src);
+          for (let i=0; i < cells.length; i++){
+            cells[i].classList.remove('src');
+          }
+          cell.classList.add('src');
+         
+        });
+
+          cell.addEventListener('contextmenu', () => {
+            event.preventDefault();
+          dest = cell.dataset.coord;
+          console.log('dest:',dest);
+          for (let i=0; i < cells.length; i++){
+            cells[i].classList.remove('dest');
+          }
+          cell.classList.add('dest');
+          
+        });
+        
+}
 
 
 
@@ -99,10 +130,7 @@ function buildGraph(rows,columns){
 
 
 function checkOutOfBounds(pos){
-    // console.log('Pos:', pos);
-    // console.log('Graph:', graph);
     let [r, c] = pos.split(',');
-    // console.log('r:', r, 'c:', c);
     const rowInbounds = 0 <= r && r <graph.length; 
     const columnInbounds = 0 <= c && c <graph[0].length; 
     return (!rowInbounds || !columnInbounds) ?  false:  true;
@@ -126,28 +154,38 @@ function checkEntries(src, dest) {
     return true;
 }
 
-function explore(src, dest, visited) {
+function explore(src, dest) {
     if (!checkOutOfBounds(src)) return false;
   
     const queue = []; // Initialize a queue to hold positions
     const visitedSet = new Set(); // Use a set to keep track of visited positions
+    const parentMap = new Map();
   
     let [r, c] = src.split(',');
     const startPos = r + ',' + c;
   
     queue.push(startPos); // Enqueue the starting position
+    parentMap.set(startPos, null)
   
     while (queue.length > 0) {
       const currentPos = queue.shift(); // Dequeue the current position
   
       if (visitedSet.has(currentPos)) continue;
   
-      visited.push(currentPos);
+     
       visitedSet.add(currentPos);
   
       if (currentPos === dest) {
         console.log('Found path');
-        console.log(visited);
+        let path = [];
+        let current = dest;
+        while (current != null) {
+            path.unshift(current); // Add the cell to the beginning of the path
+            current = parentMap.get(current); // Move to the parent cell
+        }
+        console.log('Path:', path.join(' -> '));
+
+
         return true;
       }
   
@@ -158,19 +196,21 @@ function explore(src, dest, visited) {
   
       const moves = [
         [curR - 2, curC + 1],
-        [curR - 1, curC + 2],
-        [curR + 1, curC + 2],
-        [curR + 2, curC + 1],
-        [curR - 1, curC - 2],
         [curR - 2, curC - 1],
-        [curR + 1, curC - 2],
-        [curR + 2, curC - 1]
+        [curR + 2, curC + 1],
+        [curR + 2, curC - 1],
+        [curR - 1, curC + 2],
+        [curR - 1, curC - 2],
+        [curR + 1, curC + 2],
+        [curR + 1, curC - 2]
       ];
   
       for (const [newR, newC] of moves) {
         const newPos = newR + ',' + newC;
         if (checkOutOfBounds(newPos) && !visitedSet.has(newPos)) {
           queue.push(newPos); // Enqueue the new position
+          parentMap.set(newPos, currentPos); // Set the current cell as the parent of the new cell
+          console.log(parentMap);
         }
       }
     }
@@ -180,60 +220,20 @@ function explore(src, dest, visited) {
   }
 
 
-
-
-
-
-// function explore(src,dest, visited){    /// depth first.
-//     if (!checkOutOfBounds(src)) return false;
-
-//     let [r, c] = src.split(',');
-//     const pos = r +','+ c;
-
-//     if (visited.includes(pos)) return false;
-
-//     visited.push(pos);
-//     if (pos === dest) {
-//         console.log('found path');  
-//         console.log(visited);
-//         return true;
-//     }
-
-//     // console.log(typeof(r))
-//     let move1 = (parseInt(r)-2)+','+(parseInt(c)+1);
-//     let move2 = (parseInt(r)-1)+','+(parseInt(c)+2);
-//     let move3 = (parseInt(r)+1)+','+(parseInt(c)+2);
-//     let move4 = (parseInt(r)+2)+','+(parseInt(c)+1);
-//     let move5 = (parseInt(r)-1)+','+(parseInt(c)-2);
-//     let move6 = (parseInt(r)-2)+','+(parseInt(c)-1);
-//     let move7 = (parseInt(r)+1)+','+(parseInt(c)-2);
-//     let move8 = (parseInt(r)+2)+','+(parseInt(c)-1);
-    
-//     // console.log(move1);
-
-//     explore(move1,dest,visited);
-//     explore(move2,dest,visited);
-//     explore(move3,dest,visited);
-//     explore(move4,dest,visited);
-//     explore(move5,dest,visited);
-//     explore(move6,dest,visited);
-//     explore(move7,dest,visited);
-//     explore(move8,dest,visited);
-// }
-
-
-
 //------------------------
 function work(graph, src, dest){
-    let visited = [];
-
-    printGraph(graph);
     checkEntries(src,dest);
-    explore(src,dest, visited);
+    explore(src,dest);
    
 }
 
 let graph = [];
 buildGraph(8,8);
+printGraph(graph);
+work(graph, '3,3' , '0,7');
 
-work(graph, '6,4' , '4,5');
+
+
+
+let src;
+let dest;
